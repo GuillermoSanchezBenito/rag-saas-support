@@ -2,4 +2,11 @@
 __pycache__/
 *.pyc
 data/processed/
+data/vectorstore/
+data/raw/*
+!data/raw/.gitkeep
 .vscode/
+.idea/
+venv/
+env/
+.pytest_cache/

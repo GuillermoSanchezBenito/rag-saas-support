@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.pyc
+.git/
+.gitignore
+.vscode/
+data/raw/
+data/vectorstore/
+tests/
+scripts/evaluate.py
+README.md
+task.md
+implementation_plan.md
+docker-compose.yml
