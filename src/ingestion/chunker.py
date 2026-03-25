@@ -9,6 +9,7 @@ class TextChunker:
         self.chunk_size = settings.chunk_size
         self.chunk_overlap = settings.chunk_overlap
         
+        # main text splitter
         self.splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,
@@ -17,14 +18,14 @@ class TextChunker:
             separators=["\n\n", "\n", " ", ""]
         )
 
-    def split_documents(self, documents: List[Document]) -> List[Document]:
-        """Splits a list of documents into smaller chunks."""
-        if not documents:
-            logger.warning("No documents provided for text splitting.")
+    def split_documents(self, docs: List[Document]) -> List[Document]:
+        # split docs into chunks
+        if not docs:
+            logger.warning("No docs provided for splitting.")
             return []
             
-        logger.info(f"Splitting {len(documents)} documents into chunks...")
-        chunks = self.splitter.split_documents(documents)
-        logger.info(f"Created {len(chunks)} text chunks.")
+        logger.info(f"Splitting {len(docs)} docs...")
+        chunks = self.splitter.split_documents(docs)
+        logger.info(f"Created {len(chunks)} chunks.")
         
         return chunks

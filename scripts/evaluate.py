@@ -3,10 +3,6 @@ from src.retrieval.vectorstore import VectorDB
 from src.rag.pipeline import SupportRAGPipeline
 from src.utils.logger import logger
 
-# A script to perform basic offline evaluation of the RAG system
-# Evaluates purely Retrieval Metrics initially (e.g. how many correct documents are retrieved)
-# For a full evaluation suite, consider integrating Ragas (https://docs.ragas.io)
-
 EVAL_DATASET = [
     {
         "question": "How do I reset my API key?",
@@ -19,7 +15,7 @@ EVAL_DATASET = [
 ]
 
 async def run_evaluation():
-    logger.info("Starting Offline RAG Evaluation...")
+    logger.info("Starting offline eval...")
     db = VectorDB()
     pipeline = SupportRAGPipeline(db)
     
@@ -30,19 +26,19 @@ async def run_evaluation():
         question = item["question"]
         expected = item["expected_keywords"]
         
-        logger.info(f"Evaluating: {question}")
+        logger.info(f"Eval: {question}")
         res = await pipeline.aquery(question)
         answer = res["answer"].lower()
         
-        # Simple heuristic check
         matches = [kw for kw in expected if kw.lower() in answer]
-        if len(matches) > 0:
+        if matches:
             success_count += 1
-            logger.info(f"SUCCESS: Found expected context -> {matches}")
+            logger.info(f"SUCCESS: matched {matches}")
         else:
-            logger.warning(f"FAILED: Did not find expected keywords in answer.")
+            logger.warning("FAILED: no keywords matched")
 
-    logger.info(f"Evaluation Complete! Score: {success_count}/{total} ({(success_count/total)*100}%)")
+    score = (success_count / total) * 100
+    logger.info(f"Done. Score: {success_count}/{total} ({score:.1f}%)")
 
 if __name__ == "__main__":
     asyncio.run(run_evaluation())

@@ -8,57 +8,49 @@ from src.rag.pipeline import SupportRAGPipeline
 from src.config import settings
 from src.utils.logger import logger
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Lifespan context manager for startup and shutdown events.
-    Initializes the Vector DB and RAG pipeline centrally.
-    """
-    logger.info(f"Starting {settings.app_name} Application...")
+    # init app DB and pipeline centrally
+    logger.info(f"Starting {settings.app_name}...")
     
-    # Initialize heavy components only once
     try:
-        vector_db = VectorDB()
-        app.state.rag_pipeline = SupportRAGPipeline(vector_db)
-        logger.info("RAG Pipeline and VectorDB initialized successfully.")
+        db = VectorDB()
+        app.state.rag = SupportRAGPipeline(db)
+        logger.info("RAG and VectorDB ready.")
     except Exception as e:
-        logger.error(f"Failed to initialize AI components: {e}", exc_info=True)
-        # We don't crash the server here so health checks can still report failure if needed.
+        logger.error(f"AI init failed: {e}", exc_info=True)
 
     yield
     
-    logger.info("Shutting down Application...")
-    # Clean up resources if necessary
-    app.state.rag_pipeline = None
+    logger.info("Shutting down...")
+    app.state.rag = None
+
 
 def create_app() -> FastAPI:
     app = FastAPI(
         title=settings.app_name,
-        description="Retrieval-Augmented Generation API for SaaS Technical Support",
+        description="SaaS RAG Support API",
         version="1.0.0",
         lifespan=lifespan
     )
 
-    # Add CORS middleware to allow requests from hypothetical frontend dashboard
+    # setup cors
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"], # In production, lock this down
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
 
-    # Register the router
     app.include_router(router)
 
-    # Add Top-Level Exception Handler for JSON logging of unhandled errors
+    # global error boundary
     @app.exception_handler(Exception)
-    async def global_exception_handler(request: Request, exc: Exception):
-        logger.error("Unhandled Exception Caught", exc_info=exc, extra={"path": request.url.path})
-        return JSONResponse(
-            status_code=500,
-            content={"detail": "Internal Server Error"}
-        )
+    async def global_handler(req: Request, exc: Exception):
+        logger.error("Unhandled error", exc_info=exc, extra={"path": req.url.path})
+        return JSONResponse(status_code=500, content={"detail": "Internal error"})
 
     return app
 

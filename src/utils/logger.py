@@ -4,7 +4,7 @@ import structlog
 from src.config import settings
 
 def setup_logger():
-    # Configure standard logging to redirect to structlog
+    # redirect standard logging to structlog
     logging.basicConfig(
         format="%(message)s",
         stream=sys.stdout,

@@ -1,49 +1,46 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any
-from api.dependencies import get_rag_pipeline
+
+from api.dependencies import get_pipeline
 from src.rag.pipeline import SupportRAGPipeline
 from src.utils.logger import logger
 
+
 router = APIRouter()
 
-class QueryRequest(BaseModel):
-    query: str = Field(..., example="How do I reset my password?", description="The user's question about the SaaS software.")
+class Query(BaseModel):
+    query: str = Field(..., description="User query")
 
-class SourceInfo(BaseModel):
+class Source(BaseModel):
     source: str
     page: int | None
-    content_snippet: str
+    snippet: str
 
-class QueryResponse(BaseModel):
+class Response(BaseModel):
     answer: str
-    sources: List[SourceInfo]
+    sources: List[Source]
     metadata: Dict[str, Any]
 
 @router.get("/health", tags=["System"])
-async def health_check():
-    """Returns the health status of the API."""
-    logger.info("Health check endpoint pinged.")
-    return {"status": "ok", "message": "Service is healthy"}
+async def health():
+    return {"status": "ok"}
 
-@router.post("/query", response_model=QueryResponse, tags=["RAG Support"])
-async def query_support(
-    request: QueryRequest,
-    pipeline: SupportRAGPipeline = Depends(get_rag_pipeline)
+@router.post("/query", response_model=Response, tags=["RAG"])
+async def handle_query(
+    req: Query,
+    rag: SupportRAGPipeline = Depends(get_pipeline)
 ):
-    """
-    Submits a query to the Support RAG pipeline.
-    Retrieves context from the Vector DB and generates a factual response.
-    """
+    """Process RAG query."""
     try:
-        if not request.query.strip():
-            raise HTTPException(status_code=400, detail="Query cannot be empty.")
+        if not req.query.strip():
+            raise HTTPException(status_code=400, detail="Empty query")
             
-        result = await pipeline.aquery(request.query)
-        return result
+        return await rag.aquery(req.query)
+    
     except Exception as e:
-        logger.error(f"Error processing query: {request.query}", exc_info=True)
+        logger.error(f"Query error: {req.query}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An error occurred while generating the response: {str(e)}"
+            detail=f"Error generating response: {e}"
         )

@@ -8,25 +8,25 @@ from src.retrieval.vectorstore import VectorDB
 from src.utils.logger import logger
 
 def main():
-    logger.info("Starting Data Ingestion Process...")
+    logger.info("Starting data ingestion...")
     
-    # 1. Load documents from the data directory
+    # load docs
     loader = DocumentLoader("data/raw")
-    documents = loader.load_documents()
+    docs = loader.load_documents()
     
-    if not documents:
-        logger.warning("No documents found in data/raw. Add PDF or Markdown files and try again.")
+    if not docs:
+        logger.warning("No docs found in data/raw.")
         return
         
-    # 2. Split documents into semantic chunks
+    # chunk
     chunker = TextChunker()
-    chunks = chunker.split_documents(documents)
+    chunks = chunker.split_documents(docs)
     
-    # 3. Embed and store chunks in Vector DB
+    # store
     db = VectorDB()
     db.add_documents(chunks)
     
-    logger.info("Data Ingestion complete! The database is ready for queries.")
+    logger.info("Ingestion complete. DB ready.")
 
 if __name__ == "__main__":
     main()

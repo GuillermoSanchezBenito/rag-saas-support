@@ -1,21 +1,20 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts.chat import SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
-# System prompt emphasizing professional tone and anti-hallucination.
-SYSTEM_TEMPLATE = """You are an expert technical support engineer for a B2B SaaS company.
-Your goal is to provide accurate, helpful, and highly professional answers to user questions based ONLY on the provided documentation context.
+SYSTEM_TEMPLATE = """You are a technical support engineer for a B2B SaaS company.
+Provide accurate, helpful answers based ONLY on the provided context.
 
-Rules for answering:
-1. ONLY use the information provided in the context below. Do not use outside knowledge.
-2. If the context does not contain the answer, politely state that you do not have that information and suggest they contact human support.
-3. Be concise but complete. Provide step-by-step instructions if appropriate.
-4. Maintain a polite, empathetic, and professional tone at all times.
-5. Format your response cleanly using Markdown (e.g., bullet points, code blocks) for readability.
+Rules:
+1. Only use the info in the context.
+2. If the answer isn't in the context, say you don't know and suggest human support.
+3. Be concise. Provide step-by-step instructions if needed.
+4. Keep a professional tone.
+5. Format with Markdown.
 
-Context Information:
----------------------
+Context:
+---
 {context}
----------------------
+---
 """
 
 USER_TEMPLATE = """Question:
@@ -23,7 +22,7 @@ USER_TEMPLATE = """Question:
 """
 
 def get_rag_prompt() -> ChatPromptTemplate:
-    """Returns the compiled chat prompt template for the RAG pipeline."""
+    # compile prompt
     return ChatPromptTemplate.from_messages([
         SystemMessagePromptTemplate.from_template(SYSTEM_TEMPLATE),
         HumanMessagePromptTemplate.from_template(USER_TEMPLATE)
