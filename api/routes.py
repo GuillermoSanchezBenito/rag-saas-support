@@ -32,10 +32,10 @@ async def handle_query(
     rag: SupportRAGPipeline = Depends(get_pipeline)
 ):
     """Process RAG query."""
+    if not req.query.strip():
+        raise HTTPException(status_code=400, detail="Empty query")
+        
     try:
-        if not req.query.strip():
-            raise HTTPException(status_code=400, detail="Empty query")
-            
         return await rag.aquery(req.query)
     
     except Exception as e:
