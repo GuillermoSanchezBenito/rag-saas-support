@@ -61,15 +61,23 @@ rag-saas-support/
     python scripts/ingest.py
     ```
 
-## 🏃‍♂️ Running the API
+## 🏃‍♂️ Running the Services
 
 ### Option 1: Local Server
+Start the API in one terminal:
 ```bash
 uvicorn api.main:app --reload
 ```
 Access the Swagger UI at [http://localhost:8000/docs](http://localhost:8000/docs).
 
+Start the Streamlit Frontend in another terminal:
+```bash
+streamlit run frontend/app.py
+```
+Access the Chat UI at [http://localhost:8501](http://localhost:8501).
+
 ### Option 2: Docker / Docker Compose
+This runs both the API and the Streamlit frontend.
 ```bash
 docker-compose up --build
 ```
