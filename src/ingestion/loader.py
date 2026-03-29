@@ -1,7 +1,7 @@
 import os
 from typing import List
 from langchain_core.documents import Document
-from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader, UnstructuredMarkdownLoader
+from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader, TextLoader
 from src.utils.logger import logger
 
 class DocumentLoader:
@@ -33,7 +33,7 @@ class DocumentLoader:
             md_loader = DirectoryLoader(
                 self.data_dir, 
                 glob="**/*.md", 
-                loader_cls=UnstructuredMarkdownLoader
+                loader_cls=TextLoader
             )
             mds = md_loader.load()
             docs.extend(mds)

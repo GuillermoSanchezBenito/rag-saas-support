@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Support Assistant</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-effects">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+    
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <div class="avatar">💬</div>
+                <div class="header-text">
+                    <h1>SaaS Support Assistant</h1>
+                    <p>Ask technical questions based on our docs.</p>
+                </div>
+            </div>
+            <div class="status-indicator">
+                <span class="dot" id="connection-dot"></span>
+                <span class="status-text" id="connection-text">Connecting...</span>
+            </div>
+        </header>
+
+        <main class="chat-area" id="chat-container">
+            <div class="welcome-message">
+                <h2>How can we help you today?</h2>
+                <p>Try asking questions like "How can I reset my password?" or "What are the API rate limits?"</p>
+                <div class="suggestion-chips">
+                    <button class="chip" onclick="setInput('How can I reset my password?')">Reset password</button>
+                    <button class="chip" onclick="setInput('What are the API rate limits?')">API Limits</button>
+                    <button class="chip" onclick="setInput('How to generate an API key?')">Generate API Key</button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="input-area">
+            <form id="chat-form" onsubmit="handleQuery(event)">
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="user-input" 
+                        placeholder="Type your question..." 
+                        autocomplete="off"
+                        required
+                    />
+                    <button type="submit" id="send-button" title="Send message">
+                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            <div class="footer-note">Powered by advanced RAG AI</div>
+        </footer>
+    </div>
+
+    <!-- Message Template for JS -->
+    <template id="message-template">
+        <div class="message">
+            <div class="message-avatar"></div>
+            <div class="message-content">
+                <div class="message-text"></div>
+                <div class="message-sources" style="display: none;">
+                    <div class="sources-toggle">Sources <span class="toggle-icon">▼</span></div>
+                    <ul class="sources-list"></ul>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
